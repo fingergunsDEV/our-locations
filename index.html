@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Beverly Hills Business Statistics (2025)</title>
+ 
+<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  	<style>
+		.locations-embed {
+			font-family: 'Assistant', sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: white;
+			color: #202124;
+			overflow-x: hidden;
+      width:100%;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 24px;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		header {
+			background-color: #fff;
+			
+			padding: 16px 24px;
+			text-align: center;
+			animation: fadeInDown 0.8s ease-out;
+		}
+
+		.section {
+			min-height: 100vh;
+			/* Full viewport height */
+			padding: 40px 20px;
+			scroll-margin-top: 60px;
+			/* Offset for fixed headers */
+		}
+
+		h1 {
+			font-size: 34px;
+			font-weight: 500;
+			color: #1a73e8;
+			text-align: center;
+			margin: 0;
+		}
+
+		p {
+			font-size: 16px;
+			line-height: 24px;
+			margin: 0 auto;
+			animation: fadeIn 1.2s ease-out;
+			text-align: center;
+		}
+
+		#map {
+			height: 600px;
+			width: 100%;
+			border-radius: 12px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			margin: 24px 0;
+			animation: fadeInUp 1s ease-out;
+		}
+
+		.locations-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 24px;
+			margin-top: 24px;
+		}
+
+		.location-card {
+			background-color: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			padding: 24px;
+			text-align: center;
+			animation: fadeInUp 1s ease-out;
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+
+		.location-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+		.location-card h2 {
+			font-size: 20px;
+			font-weight: 500;
+			color: #1a73e8;
+			margin: 0 0 12px;
+		}
+
+		.location-card a {
+			color: #1a73e8;
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		.location-card a:hover {
+			text-decoration: underline;
+		}
+
+		.cta-button {
+			background-color: #1a73e8;
+			color: #fff;
+			padding: 12px 24px;
+			border-radius: 8px;
+			text-transform: uppercase;
+			text-decoration: none;
+			display: inline-block;
+			margin-top: 24px;
+			transition: background-color 0.3s ease, box-shadow 0.3s ease;
+			animation: fadeIn 1.5s ease-out;
+			width: 15rem;
+		}
+
+		.cta-button:hover {
+			background-color: #1557b0;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+		footer {
+			text-align: center;
+			padding: 16px;
+			background-color: #fff;
+			box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+			margin-top: 24px;
+		}
+
+		/* Toast Notification Styles */
+		.toast {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			background-color: #1a73e8;
+			color: #fff;
+			padding: 16px 24px;
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.3s ease, transform 0.3s ease;
+			z-index: 1000;
+		}
+
+		.toast.show {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* Sleek Animations */
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadeInDown {
+			0% {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes fadeInUp {
+			0% {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	</style>
+</head>
+<body>
+<div class="locations-embed">
+
+	<h1>Our Locations</h1>
+
+	<div class="container" style="display:block;margin:0 auto;	text-align:center;width:940px">
+		<p style="width:1140px;text-align:center;">Holistic Growth Marketing provides expert SEO and digital marketing services across the United States. Click a pin on the interactive map below to learn more about our services in each city, or explore the list of locations.</p>
+		<div id="map"></div>
+		<div class="locations-grid">
+			<div class="location-card">
+				<h2>Los Angeles, CA</h2>
+				<p>Boost your visibility with our <a href="https://www.holisticgrowthmarketing.com/los-angeles-seo">Los Angeles SEO</a> services.</p>
+			</div>
+			<div class="location-card">
+				<h2>Atlanta, GA</h2>
+				<p>Dominate local search with <a href="https://www.holisticgrowthmarketing.com/atlanta-seo">Atlanta SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Beverly Hills, CA</h2>
+				<p>Elevate your brand with <a href="https://www.holisticgrowthmarketing.com/beverly-hills-seo">Beverly Hills SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Chicago, IL</h2>
+				<p>Grow your presence with <a href="https://www.holisticgrowthmarketing.com/chicago-seo">Chicago SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Culver City, CA</h2>
+				<p>Optimize your reach with <a href="https://www.holisticgrowthmarketing.com/culver-city-seo">Culver City SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Houston, TX</h2>
+				<p>Expand with <a href="https://www.holisticgrowthmarketing.com/houston-seo">Houston SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Miami, FL</h2>
+				<p>Shine with <a href="https://www.holisticgrowthmarketing.com/miami-seo">Miami SEO</a> services.</p>
+			</div>
+			<div class="location-card">
+				<h2>New York City, NY</h2>
+				<p>Stand out with <a href="https://www.holisticgrowthmarketing.com/new-york-city-seo">New York City SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>San Francisco, CA</h2>
+				<p>Thrive with <a href="https://www.holisticgrowthmarketing.com/san-francisco-seo">San Francisco SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Santa Monica, CA</h2>
+				<p>Enhance your market with <a href="https://www.holisticgrowthmarketing.com/santa-monica-seo">Santa Monica SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>Venice, CA</h2>
+				<p>Connect with <a href="https://www.holisticgrowthmarketing.com/venice-seo">Venice SEO</a>.</p>
+			</div>
+			<div class="location-card">
+				<h2>More Locations</h2>
+				<p>Discover cities like <a href="https://www.holisticgrowthmarketing.com/locations/seattle-seo">Seattle</a> and <a href="https://www.holisticgrowthmarketing.com/locations/dallas-seo">Dallas</a>.</p>
+			</div>
+		</div>
+		<a href="https://www.holisticgrowthmarketing.com/contact" class="cta-button">Contact Us Today</a>
+	</div>
+
+	<!-- Toast Notification Container -->
+	<div id="toast" class="toast"></div>
+
+	<!-- Leaflet JS -->
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<script>
+		// Initialize Leaflet Map
+		const map = L.map('map').setView([37.0902, -95.7129], 4); // Center of the US, zoom level 4
+		// Add OpenStreetMap tiles
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			maxZoom: 18,
+		}).addTo(map);
+		// Locations with coordinates and details
+		const locations = [{
+				title: "Los Angeles, CA",
+				lat: 34.0522,
+				lng: -118.2437,
+				url: "https://www.holisticgrowthmarketing.com/los-angeles-seo"
+			},
+			{
+				title: "Atlanta, GA",
+				lat: 33.7490,
+				lng: -84.3880,
+				url: "https://www.holisticgrowthmarketing.com/atlanta-seo"
+			},
+			{
+				title: "Beverly Hills, CA",
+				lat: 34.0736,
+				lng: -118.4004,
+				url: "https://www.holisticgrowthmarketing.com/beverly-hills-seo"
+			},
+			{
+				title: "Chicago, IL",
+				lat: 41.8781,
+				lng: -87.6298,
+				url: "https://www.holisticgrowthmarketing.com/chicago-seo"
+			},
+			{
+				title: "Culver City, CA",
+				lat: 34.0211,
+				lng: -118.3965,
+				url: "https://www.holisticgrowthmarketing.com/culver-city-seo"
+			},
+			{
+				title: "Houston, TX",
+				lat: 29.7604,
+				lng: -95.3698,
+				url: "https://www.holisticgrowthmarketing.com/houston-seo"
+			},
+			{
+				title: "Miami, FL",
+				lat: 25.7617,
+				lng: -80.1918,
+				url: "https://www.holisticgrowthmarketing.com/miami-seo"
+			},
+			{
+				title: "New York City, NY",
+				lat: 40.7128,
+				lng: -74.0060,
+				url: "https://www.holisticgrowthmarketing.com/new-york-city-seo"
+			},
+			{
+				title: "San Francisco, CA",
+				lat: 37.7749,
+				lng: -122.4194,
+				url: "https://www.holisticgrowthmarketing.com/san-francisco-seo"
+			},
+			{
+				title: "Santa Monica, CA",
+				lat: 34.0195,
+				lng: -118.4912,
+				url: "https://www.holisticgrowthmarketing.com/santa-monica-seo"
+			},
+			{
+				title: "Venice, CA",
+				lat: 33.9850,
+				lng: -118.4695,
+				url: "https://www.holisticgrowthmarketing.com/venice-seo"
+			},
+		];
+		// Add markers to the map
+		locations.forEach(location => {
+			const marker = L.marker([location.lat, location.lng]).addTo(map);
+			marker.bindPopup(location.title); // Optional: Shows city name on hover/click
+			marker.on('click', () => {
+				showToast(`Selected: ${location.title} - <a href="${location.url}" style="color: #fff; text-decoration: underline;">Learn More</a>`);
+			});
+		});
+		// Toast Notification Function
+		function showToast(message) {
+			const toast = document.getElementById("toast");
+			toast.innerHTML = message;
+			toast.classList.add("show");
+			setTimeout(() => {
+				toast.classList.remove("show");
+			}, 3000); // Toast disappears after 3 seconds
+		}
+	</script>
+</div>
+</body>
+</html>
